@@ -1,9 +1,14 @@
-﻿namespace MyWebApi.ContentHashValidation
+﻿using System.Diagnostics.Contracts;
+
+namespace MyWebApi.ContentHashValidation
 {
     public class ContentHashValidationOptions
     {
-        public string HeaderName { get; set; } = "X-ContentHash-Validation";
+        public const string DefaultHeaderName = "X-Content-Hash";
+        public const string DefaultHashName = "SHA-256";
 
-        public string HashName { get; set; } = "SHA-256";
+        public string HeaderName { get; set; } = DefaultHeaderName;
+
+        public string HashName { get; set; } = DefaultHashName;
     }
 }
