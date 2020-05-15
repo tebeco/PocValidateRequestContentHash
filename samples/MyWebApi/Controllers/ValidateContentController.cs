@@ -12,13 +12,6 @@ namespace MyWebApi.Controllers
     [Route("[controller]")]
     public class ValidateContentController : ControllerBase
     {
-        private readonly ILogger<ValidateContentController> _logger;
-
-        public ValidateContentController(ILogger<ValidateContentController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpPost("validated")]
         [ValidateContentHash]
         public ActionResult Validated()

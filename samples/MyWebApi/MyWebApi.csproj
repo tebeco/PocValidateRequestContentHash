@@ -4,5 +4,9 @@
     <TargetFramework>netcoreapp5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ContentHashValidation\ContentHashValidation.csproj" />
+  </ItemGroup>
+
 
 </Project>
