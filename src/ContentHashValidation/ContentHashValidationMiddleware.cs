@@ -39,6 +39,7 @@ namespace MyWebApi.ContentHashValidation
                 while (!readResult.IsCompleted && !readResult.IsCanceled)
                 {
                     readResult = await context.Request.BodyReader.ReadAsync(context.RequestAborted);
+                    context.Request.BodyReader.AdvanceTo(readResult.Buffer.Start, readResult.Buffer.End);
                 }
 
                 if (context.RequestAborted.IsCancellationRequested)
@@ -46,7 +47,6 @@ namespace MyWebApi.ContentHashValidation
                     return;
                 }
 
-                context.Request.BodyReader.AdvanceTo(readResult.Buffer.Start, readResult.Buffer.End);
 
                 var validationResult = ContentHashValidationResult.Failure;
                 var requestHashBuffer = ArrayPool<byte>.Shared.Rent(_hashAlgorithm.HashSize / 8);
