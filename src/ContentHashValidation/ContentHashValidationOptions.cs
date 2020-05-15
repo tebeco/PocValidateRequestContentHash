@@ -10,5 +10,7 @@ namespace MyWebApi.ContentHashValidation
         public string HeaderName { get; set; } = DefaultHeaderName;
 
         public string HashName { get; set; } = DefaultHashName;
+
+        public PoolKind PoolKind { get; set; }
     }
 }

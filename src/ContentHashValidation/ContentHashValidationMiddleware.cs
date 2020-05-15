@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Buffers;
 using System.Globalization;
-using System.IO.Pipelines;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace MyWebApi.ContentHashValidation
@@ -17,12 +13,22 @@ namespace MyWebApi.ContentHashValidation
         private readonly RequestDelegate _next;
         private readonly ContentHashValidationOptions _options;
         private readonly HashAlgorithm _hashAlgorithm;
+        private readonly ArrayPool<byte> _hashArrayPool;
 
         public ContentHashValidationMiddleware(RequestDelegate next, IOptions<ContentHashValidationOptions> options)
         {
             _next = next;
             _options = options.Value;
             _hashAlgorithm = HashAlgorithm.Create(_options.HashName);
+
+            _hashArrayPool = _options.PoolKind switch
+            {
+                PoolKind.SharedArrayPool => ArrayPool<byte>.Shared,
+                PoolKind.ArrayPool => ArrayPool<byte>.Create(_hashAlgorithm.HashSize / 8, 512),
+                PoolKind.FixedLengthLockFree => new FixedLengthLockFreeArrayPool<byte>(512),
+                PoolKind.FixedLengthWithLock => new FixedLengthWithLockArrayPool<byte>(512),
+                _ => throw new NotImplementedException(),
+            };
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -49,7 +55,7 @@ namespace MyWebApi.ContentHashValidation
                 }
 
                 var validationResult = ContentHashValidationResult.Failure;
-                var requestHashBuffer = ArrayPool<byte>.Shared.Rent(_hashAlgorithm.HashSize / 8);
+                var requestHashBuffer = _hashArrayPool.Rent(_hashAlgorithm.HashSize / 8);
 
                 bool gotHash;
                 if (!readResult.Buffer.IsSingleSegment)
@@ -70,7 +76,7 @@ namespace MyWebApi.ContentHashValidation
                         ? ContentHashValidationResult.Success
                         : ContentHashValidationResult.Failure;
                 }
-                ArrayPool<byte>.Shared.Return(requestHashBuffer);
+                _hashArrayPool.Return(requestHashBuffer);
 
                 if (!validationResult.Succeed)
                 {
