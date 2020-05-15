@@ -24,14 +24,21 @@ namespace PocValidateRequestContentHash.MicroBenchmark
             _middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
 
             var bodyBuffer = Encoding.UTF8.GetBytes(new string('-', RequestBodyByteSize));
-            var hash = SHA256.Create().ComputeHash(bodyBuffer);
-            var hashStringified = BitConverter.ToString(hash).Replace("-", "");
+            var hashHeader = new string('0', 64);
+            if (ValidHash)
+            {
+                var hash = SHA256.Create().ComputeHash(bodyBuffer);
+                hashHeader = BitConverter.ToString(hash).Replace("-", "");
+            }
 
             _httpContext = new DefaultHttpContext();
             _httpContext.Request.Body = new MemoryStream(bodyBuffer);
-            _httpContext.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashStringified;
+            if (WithHeader)
+            {
+                _httpContext.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashHeader;
+            }
             _httpContext.Request.Method = "POST";
-            if (RequireContentValidation)
+            if (WithValidation)
             {
                 _httpContext.SetEndpoint(new Endpoint(_ => Task.CompletedTask,
                                                          new EndpointMetadataCollection(new ValidateContentHashAttribute()),
@@ -39,14 +46,20 @@ namespace PocValidateRequestContentHash.MicroBenchmark
             }
         }
 
-        [Params(8, 2048, 4096, 16384)]
+        [Params(8, 2048, 3072, 4096 - 64, 4096, 16384)]
         public int RequestBodyByteSize;
 
         [Params(true, false)]
-        public bool RequireContentValidation;
+        public bool WithValidation;
+
+        [Params(true, false)]
+        public bool WithHeader;
+
+        [Params(true, false)]
+        public bool ValidHash;
 
         [Benchmark]
-        public async Task Run_ContentHashValidationMiddleware()
+        public async Task Validate()
         {
             await _middleware.InvokeAsync(_httpContext);
         }
