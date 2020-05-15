@@ -96,5 +96,23 @@ namespace ContentHashValidation.Tests
 
             Assert.Equal(400, httpContext.Response.StatusCode);
         }
+
+        [Fact]
+        public async Task Should_return_400_request_When_missing_header()
+        {
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("payload"));
+            httpContext.Request.Method = "POST";
+            httpContext.SetEndpoint(new Endpoint(c => Task.CompletedTask,
+                                                 new EndpointMetadataCollection(new ValidateContentHashAttribute()),
+                                                 "someRoute"));
+
+            var next = new RequestDelegate(_ => Task.CompletedTask);
+            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
+
+            await middleware.InvokeAsync(httpContext);
+
+            Assert.Equal(400, httpContext.Response.StatusCode);
+        }
     }
 }
