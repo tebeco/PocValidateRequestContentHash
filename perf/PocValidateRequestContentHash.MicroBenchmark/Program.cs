@@ -6,7 +6,10 @@ namespace PocValidateRequestContentHash.MicroBenchmark
     {
         public static void Main(string[] args)
         {
-            var summary = BenchmarkRunner.Run<Benchmarks>();
+            _ = BenchmarkRunner.Run<ValidDataBenchmarks>();
+            _ = BenchmarkRunner.Run<InvalidHashBenchmarks>();
+            _ = BenchmarkRunner.Run<InvalidHeaderBenchmarks>();
+            
         }
     }
 }

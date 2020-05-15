@@ -12,7 +12,7 @@ using MyWebApi.ContentHashValidation;
 namespace PocValidateRequestContentHash.MicroBenchmark
 {
     [MemoryDiagnoser]
-    public class Benchmarks
+    public class InvalidHeaderBenchmarks
     {
         private DefaultHttpContext _httpContext;
         private ContentHashValidationMiddleware _middleware;
@@ -24,11 +24,12 @@ namespace PocValidateRequestContentHash.MicroBenchmark
             _middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
 
             var bodyBuffer = Encoding.UTF8.GetBytes(new string('-', RequestBodyByteSize));
-            var hashHeader = new string('0', 64);
-            if (ValidHash)
+            var hash = SHA256.Create().ComputeHash(bodyBuffer);
+            var hashHeader = "00";
+            if (!FastCorruptedHeader)
             {
-                var hash = SHA256.Create().ComputeHash(bodyBuffer);
-                hashHeader = BitConverter.ToString(hash).Replace("-", "");
+                hashHeader = BitConverter.ToString(hash);
+                hashHeader = hashHeader.Substring(0, hashHeader.Length - 2) + '0';
             }
 
             _httpContext = new DefaultHttpContext();
@@ -38,25 +39,19 @@ namespace PocValidateRequestContentHash.MicroBenchmark
                 _httpContext.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashHeader;
             }
             _httpContext.Request.Method = "POST";
-            if (WithValidation)
-            {
-                _httpContext.SetEndpoint(new Endpoint(_ => Task.CompletedTask,
-                                                         new EndpointMetadataCollection(new ValidateContentHashAttribute()),
-                                                         "someRoute"));
-            }
+            _httpContext.SetEndpoint(new Endpoint(_ => Task.CompletedTask,
+                                                     new EndpointMetadataCollection(new ValidateContentHashAttribute()),
+                                                     "someRoute"));
         }
 
-        [Params(8, 2048, 3072, 4096 - 64, 4096, 16384)]
+        [Params(8, 4096, 16384)]
         public int RequestBodyByteSize;
-
-        [Params(true, false)]
-        public bool WithValidation;
 
         [Params(true, false)]
         public bool WithHeader;
 
         [Params(true, false)]
-        public bool ValidHash;
+        public bool FastCorruptedHeader;
 
         [Benchmark]
         public async Task Validate()

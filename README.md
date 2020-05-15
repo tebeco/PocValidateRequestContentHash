@@ -1,9 +1,4 @@
-# TLDR
-As the benchmarks indicate 0 allocation with naive code ... well ... I can't trust the code or the benchmark yet
-
 # Naive Benchmark
-
-Small payload
 
 ```
 // * Summary *
@@ -13,98 +8,10 @@ Intel Core i9-9980HK CPU 2.40GHz, 1 CPU, 16 logical and 8 physical cores
 .NET Core SDK=5.0.100-preview.3.20216.6
   [Host]     : .NET Core 5.0.0 (CoreCLR 5.0.20.21406, CoreFX 5.0.20.21406), X64 RyuJIT
   DefaultJob : .NET Core 5.0.0 (CoreCLR 5.0.20.21406, CoreFX 5.0.20.21406), X64 RyuJIT
-```
-
-|   Method | RequestBodyByteSize | WithValidation | WithHeader | ValidHash |         Mean |        Error |     StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|--------- |-------------------- |--------------- |----------- |---------- |-------------:|-------------:|-----------:|-------:|------:|------:|----------:|
-| Validate |                   8 |          False |      False |     False |     59.38 ns |     0.784 ns |   0.733 ns |      - |     - |     - |         - |
-| Validate |                   8 |          False |      False |      True |     55.74 ns |     0.700 ns |   0.655 ns |      - |     - |     - |         - |
-| Validate |                   8 |          False |       True |     False |     57.80 ns |     0.457 ns |   0.428 ns |      - |     - |     - |         - |
-| Validate |                   8 |          False |       True |      True |     66.70 ns |     0.824 ns |   0.771 ns |      - |     - |     - |         - |
-| Validate |                   8 |           True |      False |     False |    110.55 ns |     1.332 ns |   1.181 ns |      - |     - |     - |         - |
-| Validate |                   8 |           True |      False |      True |    114.16 ns |     2.039 ns |   1.908 ns |      - |     - |     - |         - |
-| Validate |                   8 |           True |       True |     False |    657.80 ns |    13.188 ns |  22.034 ns |      - |     - |     - |         - |
-| Validate |                   8 |           True |       True |      True |  1,078.31 ns |    17.390 ns |  16.267 ns |      - |     - |     - |         - |
-| Validate |                2048 |          False |      False |     False |     60.96 ns |     0.578 ns |   0.513 ns |      - |     - |     - |         - |
-| Validate |                2048 |          False |      False |      True |     60.17 ns |     0.669 ns |   0.559 ns |      - |     - |     - |         - |
-| Validate |                2048 |          False |       True |     False |     67.61 ns |     1.369 ns |   2.572 ns |      - |     - |     - |         - |
-| Validate |                2048 |          False |       True |      True |     71.30 ns |     1.456 ns |   2.392 ns |      - |     - |     - |         - |
-| Validate |                2048 |           True |      False |     False |    116.11 ns |     2.211 ns |   2.069 ns |      - |     - |     - |         - |
-| Validate |                2048 |           True |      False |      True |    113.31 ns |     1.351 ns |   1.264 ns |      - |     - |     - |         - |
-| Validate |                2048 |           True |       True |     False |  8,306.21 ns |   162.659 ns | 180.795 ns |      - |     - |     - |         - |
-| Validate |                2048 |           True |       True |      True |  8,739.56 ns |   174.706 ns | 171.585 ns |      - |     - |     - |         - |
-| Validate |                3072 |          False |      False |     False |     58.92 ns |     1.184 ns |   1.735 ns |      - |     - |     - |         - |
-| Validate |                3072 |          False |      False |      True |     58.52 ns |     1.195 ns |   2.215 ns |      - |     - |     - |         - |
-| Validate |                3072 |          False |       True |     False |     55.90 ns |     0.824 ns |   0.731 ns |      - |     - |     - |         - |
-| Validate |                3072 |          False |       True |      True |     59.15 ns |     0.895 ns |   0.793 ns |      - |     - |     - |         - |
-| Validate |                3072 |           True |      False |     False |    119.53 ns |     2.357 ns |   3.065 ns |      - |     - |     - |         - |
-| Validate |                3072 |           True |      False |      True |    108.50 ns |     2.193 ns |   3.215 ns |      - |     - |     - |         - |
-| Validate |                3072 |           True |       True |     False | 11,981.76 ns |   169.160 ns | 141.256 ns |      - |     - |     - |         - |
-| Validate |                3072 |           True |       True |      True | 12,940.01 ns |   258.321 ns | 503.835 ns |      - |     - |     - |         - |
-| Validate |                4032 |          False |      False |     False |     54.81 ns |     0.484 ns |   0.429 ns |      - |     - |     - |         - |
-| Validate |                4032 |          False |      False |      True |     56.43 ns |     1.154 ns |   1.541 ns |      - |     - |     - |         - |
-| Validate |                4032 |          False |       True |     False |     65.46 ns |     0.668 ns |   0.625 ns |      - |     - |     - |         - |
-| Validate |                4032 |          False |       True |      True |     57.73 ns |     0.334 ns |   0.313 ns |      - |     - |     - |         - |
-| Validate |                4032 |           True |      False |     False |    105.76 ns |     0.974 ns |   0.863 ns |      - |     - |     - |         - |
-| Validate |                4032 |           True |      False |      True |    109.75 ns |     0.651 ns |   0.543 ns |      - |     - |     - |         - |
-| Validate |                4032 |           True |       True |     False | 15,589.36 ns |   127.454 ns | 119.221 ns | 0.4578 |     - |     - |    4056 B |
-| Validate |                4032 |           True |       True |      True | 15,926.41 ns |    76.417 ns |  67.742 ns | 0.4578 |     - |     - |    4056 B |
-| Validate |                4096 |          False |      False |     False |     56.59 ns |     0.452 ns |   0.401 ns |      - |     - |     - |         - |
-| Validate |                4096 |          False |      False |      True |     54.37 ns |     0.268 ns |   0.251 ns |      - |     - |     - |         - |
-| Validate |                4096 |          False |       True |     False |     61.35 ns |     0.437 ns |   0.409 ns |      - |     - |     - |         - |
-| Validate |                4096 |          False |       True |      True |     65.17 ns |     0.509 ns |   0.476 ns |      - |     - |     - |         - |
-| Validate |                4096 |           True |      False |     False |    109.86 ns |     0.790 ns |   0.700 ns |      - |     - |     - |         - |
-| Validate |                4096 |           True |      False |      True |    103.24 ns |     1.225 ns |   1.023 ns |      - |     - |     - |         - |
-| Validate |                4096 |           True |       True |     False | 15,831.58 ns |   106.168 ns |  88.655 ns | 0.4883 |     - |     - |    4120 B |
-| Validate |                4096 |           True |       True |      True | 16,177.98 ns |    92.365 ns |  86.398 ns | 0.4883 |     - |     - |    4120 B |
-| Validate |               16384 |          False |      False |     False |     57.73 ns |     0.366 ns |   0.342 ns |      - |     - |     - |         - |
-| Validate |               16384 |          False |      False |      True |     58.78 ns |     0.238 ns |   0.222 ns |      - |     - |     - |         - |
-| Validate |               16384 |          False |       True |     False |     60.62 ns |     0.554 ns |   0.519 ns |      - |     - |     - |         - |
-| Validate |               16384 |          False |       True |      True |     57.40 ns |     0.348 ns |   0.308 ns |      - |     - |     - |         - |
-| Validate |               16384 |           True |      False |     False |    114.91 ns |     1.977 ns |   1.942 ns |      - |     - |     - |         - |
-| Validate |               16384 |           True |      False |      True |    111.25 ns |     1.403 ns |   1.172 ns |      - |     - |     - |         - |
-| Validate |               16384 |           True |       True |     False | 63,160.17 ns | 1,002.846 ns | 938.063 ns | 1.9531 |     - |     - |   16408 B |
-| Validate |               16384 |           True |       True |      True | 63,476.01 ns | 1,197.462 ns | 999.935 ns | 1.9531 |     - |     - |   16408 B |
-
-```
-// * Warnings *
-MultimodalDistribution
-  Benchmarks.Validate: Default -> It seems that the distribution can have several modes (mValue = 3.13)
-
-// * Hints *
-Outliers
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (155.39 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (733.99 ns, 782.82 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (1.13 us, 1.14 us)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (65.84 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (63.57 ns, 64.14 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (98.33 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (83.22 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (9.25 us)
-  Benchmarks.Validate: Default -> 2 outliers were removed (9.43 us, 9.58 us)
-  Benchmarks.Validate: Default -> 2 outliers were removed (69.98 ns, 82.86 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (61.36 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (64.50 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (12.43 us, 12.63 us)
-  Benchmarks.Validate: Default -> 2 outliers were removed (14.37 us, 15.11 us)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (57.85 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (156.09 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (113.39 ns, 114.13 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (16.16 us)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (59.80 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed, 3 outliers were detected (110.14 ns, 110.42 ns, 113.10 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (108.99 ns, 113.95 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (16.18 us, 16.60 us)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (60.48 ns)
-  Benchmarks.Validate: Default -> 1 outlier  was  removed (121.91 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (118.39 ns, 119.88 ns)
-  Benchmarks.Validate: Default -> 2 outliers were removed (69.93 us, 74.05 us)
-
+  
+  
 // * Legends *
   RequestBodyByteSize : Value of the 'RequestBodyByteSize' parameter
-  WithValidation      : Value of the 'WithValidation' parameter
-  WithHeader          : Value of the 'WithHeader' parameter
-  ValidHash           : Value of the 'ValidHash' parameter
   Mean                : Arithmetic mean of all measurements
   Error               : Half of 99.9% confidence interval
   StdDev              : Standard deviation of all measurements
@@ -113,4 +20,63 @@ Outliers
   Gen 2               : GC Generation 2 collects per 1000 operations
   Allocated           : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
   1 ns                : 1 Nanosecond (0.000000001 sec)
-  ```
+```
+
+## RunValidData
+
+|       Method | RequestBodyByteSize | WithValidation |         Mean |      Error |     StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------- |-------------------- |--------------- |-------------:|-----------:|-----------:|-------:|------:|------:|----------:|
+| RunValidData |                   8 |          False |     64.44 ns |   1.244 ns |   1.661 ns |      - |     - |     - |         - |
+| RunValidData |                   8 |           True |  1,057.58 ns |  21.064 ns |  24.258 ns |      - |     - |     - |         - |
+| RunValidData |                2048 |          False |     59.98 ns |   1.135 ns |   1.664 ns |      - |     - |     - |         - |
+| RunValidData |                2048 |           True |  8,663.90 ns | 142.821 ns | 133.594 ns |      - |     - |     - |         - |
+| RunValidData |                3072 |          False |     59.28 ns |   1.213 ns |   1.245 ns |      - |     - |     - |         - |
+| RunValidData |                3072 |           True | 12,283.47 ns | 168.063 ns | 140.340 ns |      - |     - |     - |         - |
+| RunValidData |                4032 |          False |     58.15 ns |   0.585 ns |   0.518 ns |      - |     - |     - |         - |
+| RunValidData |                4032 |           True | 15,940.04 ns | 109.443 ns | 102.373 ns | 0.4578 |     - |     - |    4056 B |
+| RunValidData |                4096 |          False |     59.43 ns |   0.271 ns |   0.227 ns |      - |     - |     - |         - |
+| RunValidData |                4096 |           True | 16,220.22 ns | 117.458 ns | 109.870 ns | 0.4883 |     - |     - |    4120 B |
+| RunValidData |               16384 |          False |     57.08 ns |   0.593 ns |   0.463 ns |      - |     - |     - |         - |
+| RunValidData |               16384 |           True | 61,810.19 ns | 757.170 ns | 671.211 ns | 1.9531 |     - |     - |   16408 B |
+
+## InvalidHeaderBenchmarks
+|   Method | RequestBodyByteSize | WithHeader | FastCorruptedHeader |     Mean |   Error |  StdDev | Gen 0 | Gen 1 | Gen 2 | Allocated |
+|--------- |-------------------- |----------- |-------------------- |---------:|--------:|--------:|------:|------:|------:|----------:|
+| Validate |                   8 |      False |               False | 112.5 ns | 2.23 ns | 3.54 ns |     - |     - |     - |         - |
+| Validate |                   8 |      False |                True | 119.3 ns | 2.35 ns | 3.21 ns |     - |     - |     - |         - |
+| Validate |                   8 |       True |               False | 133.1 ns | 2.69 ns | 5.50 ns |     - |     - |     - |         - |
+| Validate |                   8 |       True |                True | 133.6 ns | 1.31 ns | 1.09 ns |     - |     - |     - |         - |
+| Validate |                4096 |      False |               False | 108.1 ns | 0.99 ns | 0.93 ns |     - |     - |     - |         - |
+| Validate |                4096 |      False |                True | 115.4 ns | 2.32 ns | 4.58 ns |     - |     - |     - |         - |
+| Validate |                4096 |       True |               False | 129.5 ns | 2.12 ns | 1.98 ns |     - |     - |     - |         - |
+| Validate |                4096 |       True |                True | 148.1 ns | 2.94 ns | 5.38 ns |     - |     - |     - |         - |
+| Validate |               16384 |      False |               False | 102.1 ns | 1.43 ns | 1.34 ns |     - |     - |     - |         - |
+| Validate |               16384 |      False |                True | 106.5 ns | 1.15 ns | 1.02 ns |     - |     - |     - |         - |
+| Validate |               16384 |       True |               False | 127.3 ns | 2.49 ns | 2.67 ns |     - |     - |     - |         - |
+| Validate |               16384 |       True |                True | 134.2 ns | 2.72 ns | 5.48 ns |     - |     - |     - |         - |
+
+
+
+## InvalidHashBenchmarks
+|   Method | RequestBodyByteSize |        Mean |       Error |      StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|--------- |-------------------- |------------:|------------:|------------:|-------:|------:|------:|----------:|
+| Validate |                   8 |    628.7 ns |     4.47 ns |     4.18 ns |      - |     - |     - |         - |
+| Validate |                2048 |  8,098.1 ns |   148.29 ns |   131.46 ns |      - |     - |     - |         - |
+| Validate |                3072 | 11,702.0 ns |   106.74 ns |    94.62 ns |      - |     - |     - |         - |
+| Validate |                4032 | 16,264.5 ns |   321.79 ns |   596.45 ns | 0.4578 |     - |     - |    4056 B |
+| Validate |                4096 | 16,059.6 ns |   298.69 ns |   428.37 ns | 0.4883 |     - |     - |    4120 B |
+| Validate |               16384 | 63,847.6 ns | 1,263.45 ns | 1,812.01 ns | 1.9531 |     - |     - |   16408 B |
+
+```
+// * Warnings *
+MultimodalDistribution
+  InvalidHashBenchmarks.Validate: Default -> It seems that the distribution can have several modes (mValue = 2.87)
+
+// * Hints *
+Outliers
+  InvalidHashBenchmarks.Validate: Default -> 1 outlier  was  removed (9.72 us)
+  InvalidHashBenchmarks.Validate: Default -> 1 outlier  was  removed (12.25 us)
+  InvalidHashBenchmarks.Validate: Default -> 5 outliers were removed (18.89 us..19.89 us)
+  InvalidHashBenchmarks.Validate: Default -> 3 outliers were removed (17.65 us..18.37 us)
+  InvalidHashBenchmarks.Validate: Default -> 1 outlier  was  removed (76.10 us)
+```
