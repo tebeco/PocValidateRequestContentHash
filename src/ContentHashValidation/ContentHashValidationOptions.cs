@@ -11,6 +11,6 @@ namespace MyWebApi.ContentHashValidation
 
         public string HashName { get; set; } = DefaultHashName;
 
-        public PoolKind PoolKind { get; set; }
+        public PoolKind PoolKind { get; set; } = PoolKind.DedicatedArrayPool;
     }
 }

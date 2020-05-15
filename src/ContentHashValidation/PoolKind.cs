@@ -3,7 +3,7 @@
     public enum PoolKind
     {
         SharedArrayPool,
-        ArrayPool,
+        DedicatedArrayPool,
         FixedLengthLockFree,
         FixedLengthWithLock,
         PreAllocatedFixedLengthLockFree,
