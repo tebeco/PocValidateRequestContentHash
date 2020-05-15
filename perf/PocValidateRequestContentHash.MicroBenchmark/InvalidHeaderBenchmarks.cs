@@ -29,7 +29,7 @@ namespace PocValidateRequestContentHash.MicroBenchmark
             if (!FastCorruptedHeader)
             {
                 hashHeader = BitConverter.ToString(hash);
-                hashHeader = hashHeader.Substring(0, hashHeader.Length - 2) + '0';
+                hashHeader = hashHeader[0..^2] + '0';
             }
 
             _httpContext = new DefaultHttpContext();
