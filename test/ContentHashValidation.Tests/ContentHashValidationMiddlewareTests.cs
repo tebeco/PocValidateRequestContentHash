@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MyWebApi.ContentHashValidation;
 using System;
@@ -36,7 +37,7 @@ namespace ContentHashValidation.Tests
             }
 
             var next = new RequestDelegate(context => { context.Response.StatusCode = 200; return Task.CompletedTask; });
-            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
+            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()), NullLogger<ContentHashValidationMiddleware>.Instance);
 
             await middleware.InvokeAsync(httpContext);
 
@@ -65,7 +66,7 @@ namespace ContentHashValidation.Tests
                                                  "someRoute"));
 
             var next = new RequestDelegate(_ => Task.CompletedTask);
-            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
+            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()), NullLogger<ContentHashValidationMiddleware>.Instance);
 
             await middleware.InvokeAsync(httpContext);
 
@@ -84,7 +85,7 @@ namespace ContentHashValidation.Tests
                                                  "someRoute"));
 
             var next = new RequestDelegate(_ => Task.CompletedTask);
-            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
+            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()), NullLogger<ContentHashValidationMiddleware>.Instance);
 
             await middleware.InvokeAsync(httpContext);
 
@@ -102,7 +103,7 @@ namespace ContentHashValidation.Tests
                                                  "someRoute"));
 
             var next = new RequestDelegate(_ => Task.CompletedTask);
-            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
+            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()), NullLogger<ContentHashValidationMiddleware>.Instance);
 
             await middleware.InvokeAsync(httpContext);
 
@@ -121,7 +122,7 @@ namespace ContentHashValidation.Tests
                                                  "someRoute"));
 
             var next = new RequestDelegate(_ => Task.CompletedTask);
-            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
+            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()), NullLogger<ContentHashValidationMiddleware>.Instance);
 
             await middleware.InvokeAsync(httpContext);
 
@@ -158,7 +159,7 @@ namespace ContentHashValidation.Tests
                                                  "someRoute"));
 
             var next = new RequestDelegate(context => { context.Response.StatusCode = 200; return Task.CompletedTask; });
-            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions() { PoolKind = poolKind }));
+            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions() { PoolKind = poolKind }), NullLogger<ContentHashValidationMiddleware>.Instance);
 
             await middleware.InvokeAsync(httpContext);
 

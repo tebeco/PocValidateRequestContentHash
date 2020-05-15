@@ -93,3 +93,36 @@ Intel Core i9-9980HK CPU 2.40GHz, 1 CPU, 16 logical and 8 physical cores
 |    Run |               16384 |  FixedLengthWithLock | 62.682 us | 1.0509 us | 0.9316 us |      - |     - |     - |         - |
 |    Run |               16384 | PreAl(...)kFree [31] | 61.910 us | 0.6302 us | 0.5895 us |      - |     - |     - |      32 B |
 |    Run |               16384 | PreAl(...)hLock [31] | 62.116 us | 0.4770 us | 0.4229 us |      - |     - |     - |         - |
+
+# Bombardier
+`> bombardier-windows-amd64.exe --connections 200 --requests 1000000 https://localhost:5001/ValidateContent/validated --body="payload" --method="POST" --header="X-Content-Hash: 239F59ED55E737C77147CF55AD0C1B030B6D7EE748A7426952F9B852D5A935E5" --format=json -p r`
+
+|                        PoolKind | Latency (mean) | Latency (max) |   RPS (mean) |          RPS (max) |          50 |          75 |          90 |          95 |          99 |
+|---------------------------------|----------------|---------------|--------------|--------------------|-------------|-------------|-------------|-------------|-------------|
+|                 SharedArrayPool |    1918.752118 |        440000 | 103084.9488  | 148420.0902805554  | 112629.6929 | 120669.5398 | 125366.4416 | 128236.599  | 131588.5166 |
+|              DedicatedArrayPool |    1990.481452 |        478002 |  99446.22105 | 131272.7272727273  | 108139.5719 | 115408.297  | 120159.8541 | 122706.1353 | 126346.2096 |
+|             FixedLengthLockFree |    1889.781931 |        442999 | 103736.1931  | 160190.6952709573  | 113384.6154 | 122916.826  | 128468.9506 | 130457.2462 | 135336.0401 |
+|             FixedLengthWithLock |    2034.225963 |        479001 |  97719.67712 | 152477.12843073538 | 105803.7031 | 114613.6213 | 121038.742  | 123704.427  | 128235.0587 |
+| PreAllocatedFixedLengthLockFree |    1757.201798 |        376000 |  112742.9014 | 162650.40162650403 | 118730.2857 | 123806.1903 | 127630.2355 | 129313.4795 | 134552.5655 |
+| PreAllocatedFixedLengthWithLock |    2041.358069 |        449996 |  96928.43497 | 161008.0504025201  | 106898.931  | 114407.918  | 118571.598  | 122281.5142 | 128829.8936 |
+
+
+## Raw data 
+#### SharedArrayPool
+`{"spec":{"numberOfConnections":200,"testType":"number-of-requests","numberOfRequests":1000000,"method":"POST","url":"https://localhost:5001/ValidateContent/validated","headers":[{"key":"X-Content-Hash","value":"239F59ED55E737C77147CF55AD0C1B030B6D7EE748A7426952F9B852D5A935E5"}],"body":"payload","stream":false,"timeoutSeconds":2,"client":"fasthttp"},"result":{"bytesRead":123042065,"bytesWritten":274064400,"timeTakenSeconds":9.6189994,"req1xx":0,"req2xx":802015,"req3xx":0,"req4xx":197985,"req5xx":0,"others":0,"latency":{"mean":1918.752118,"stddev":3533.940674615616,"max":440000},"rps":{"mean":103084.9487998893,"stddev":23500.38114029669,"max":148420.0902805554,"percentiles":{"50":112629.692904,"75":120669.539751,"90":  ,"95":128236.599025,"99":131588.516572}}}}`
+
+#### DedicatedArrayPool
+`{"spec":{"numberOfConnections":200,"testType":"number-of-requests","numberOfRequests":1000000,"method":"POST","url":"https://localhost:5001/ValidateContent/validated","headers":[{"key":"X-Content-Hash","value":"239F59ED55E737C77147CF55AD0C1B030B6D7EE748A7426952F9B852D5A935E5"}],"body":"payload","stream":false,"timeoutSeconds":2,"client":"fasthttp"},"result":{"bytesRead":123307754,"bytesWritten":274064400,"timeTakenSeconds":9.9750019,"req1xx":0,"req2xx":772494,"req3xx":0,"req4xx":227506,"req5xx":0,"others":0,"latency":{"mean":1990.481452,"stddev":3870.2134739121316,"max":478002},"rps":{"mean":99446.22104827361,"stddev":21134.63218418287,"max":131272.7272727273,"percentiles":{"50":108139.571898,"75":115408.296978,"90": ,"95":122706.135307,"99":126346.209614}}}}`
+
+#### FixedLengthLockFree
+`{"spec":{"numberOfConnections":200,"testType":"number-of-requests","numberOfRequests":1000000,"method":"POST","url":"https://localhost:5001/ValidateContent/validated","headers":[{"key":"X-Content-Hash","value":"239F59ED55E737C77147CF55AD0C1B030B6D7EE748A7426952F9B852D5A935E5"}],"body":"payload","stream":false,"timeoutSeconds":2,"client":"fasthttp"},"result":{"bytesRead":123320345,"bytesWritten":274064400,"timeTakenSeconds":9.4699726,"req1xx":0,"req2xx":771095,"req3xx":0,"req4xx":228905,"req5xx":0,"others":0,"latency":{"mean":1889.781931,"stddev":3953.133230848118,"max":442999},"rps":{"mean":103736.1931014924,"stddev":25525.759717086345,"max":160190.6952709573,"percentiles":{"50":113384.615385,"75":122916.825987,"90": ,"95":130457.246190,"99":135336.040054}}}}`
+
+#### FixedLengthWithLock
+`{"spec":{"numberOfConnections":200,"testType":"number-of-requests","numberOfRequests":1000000,"method":"POST","url":"https://localhost:5001/ValidateContent/validated","headers":[{"key":"X-Content-Hash","value":"239F59ED55E737C77147CF55AD0C1B030B6D7EE748A7426952F9B852D5A935E5"}],"body":"payload","stream":false,"timeoutSeconds":2,"client":"fasthttp"},"result":{"bytesRead":123429389,"bytesWritten":274064400,"timeTakenSeconds":10.1984924,"req1xx":0,"req2xx":758979,"req3xx":0,"req4xx":241021,"req5xx":0,"others":0,"latency":{"mean":2034.225963,"stddev":4078.919101362623,"max":479001},"rps":{"mean":97719.67712259587,"stddev":21607.3100792371,"max":152477.12843073538,"percentiles":{"50":105803.703130,"75":114613.621329,"90": ,"95":123704.427007,"99":128235.058698}}}}`
+
+#### PreAllocatedFixedLengthLockFree
+`{"spec":{"numberOfConnections":200,"testType":"number-of-requests","numberOfRequests":1000000,"method":"POST","url":"https://localhost:5001/ValidateContent/validated","headers":[{"key":"X-Content-Hash","value":"239F59ED55E737C77147CF55AD0C1B030B6D7EE748A7426952F9B852D5A935E5"}],"body":"payload","stream":false,"timeoutSeconds":2,"client":"fasthttp"},"result":{"bytesRead":123271484,"bytesWritten":274064400,"timeTakenSeconds":8.8089664,"req1xx":0,"req2xx":776524,"req3xx":0,"req4xx":223476,"req5xx":0,"others":0,"latency":{"mean":1757.201798,"stddev":3223.18752777695,"max":376000},"rps":{"mean":112742.9014492126,"stddev":22250.575928200287,"max":162650.40162650403,"percentiles":{"50":118730.285664,"75":123806.190310,"90": ,"95":129313.479510,"99":134552.565499}}}}`
+
+#### PreAllocatedFixedLengthWithLock
+`{"spec":{"numberOfConnections":200,"testType":"number-of-requests","numberOfRequests":1000000,"method":"POST","url":"https://localhost:5001/ValidateContent/validated","headers":[{"key":"X-Content-Hash","value":"239F59ED55E737C77147CF55AD0C1B030B6D7EE748A7426952F9B852D5A935E5"}],"body":"payload","stream":false,"timeoutSeconds":2,"client":"fasthttp"},"result":{"bytesRead":123290672,"bytesWritten":274064400,"timeTakenSeconds":10.2273042,"req1xx":0,"req2xx":774392,"req3xx":0,"req4xx":225608,"req5xx":0,"others":0,"latency":{"mean":2041.358069,"stddev":3465.7908176160076,"max":449996},"rps":{"mean":96928.43496620869,"stddev":22061.505993581395,"max":161008.0504025201,"percentiles":{"50":106898.931011,"75":114407.917955,"90": ,"95":122281.514157,"99":128829.893627}}}}`
+

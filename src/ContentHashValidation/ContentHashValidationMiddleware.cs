@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace MyWebApi.ContentHashValidation
@@ -11,13 +12,15 @@ namespace MyWebApi.ContentHashValidation
     public class ContentHashValidationMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ContentHashValidationMiddleware> _logger;
         private readonly ContentHashValidationOptions _options;
         private readonly HashAlgorithm _hashAlgorithm;
         private readonly ArrayPool<byte> _hashArrayPool;
 
-        public ContentHashValidationMiddleware(RequestDelegate next, IOptions<ContentHashValidationOptions> options)
+        public ContentHashValidationMiddleware(RequestDelegate next, IOptions<ContentHashValidationOptions> options, ILogger<ContentHashValidationMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
             _options = options.Value;
             _hashAlgorithm = HashAlgorithm.Create(_options.HashName);
 
@@ -40,11 +43,13 @@ namespace MyWebApi.ContentHashValidation
                 if (!context.Request.Headers.TryGetValue(_options.HeaderName, out var expectedHash)
                     || expectedHash[0].Length << 2 != _hashAlgorithm.HashSize)
                 {
+                    _logger.LogWarning("Correputed header: {header}", expectedHash);
                     context.Response.StatusCode = 400;
                     return;
                 }
 
                 var readResult = await context.Request.BodyReader.ReadAsync(context.RequestAborted);
+                context.Request.BodyReader.AdvanceTo(readResult.Buffer.Start, readResult.Buffer.End);
                 while (!readResult.IsCompleted && !readResult.IsCanceled)
                 {
                     readResult = await context.Request.BodyReader.ReadAsync(context.RequestAborted);
@@ -53,6 +58,8 @@ namespace MyWebApi.ContentHashValidation
 
                 if (context.RequestAborted.IsCancellationRequested)
                 {
+                    _logger.LogWarning("CancellationRequested");
+
                     return;
                 }
 
@@ -82,6 +89,8 @@ namespace MyWebApi.ContentHashValidation
 
                 if (!validationResult.Succeed)
                 {
+                    _logger.LogWarning("Hash missmatch, expected: {expected}", expectedHash);
+
                     context.Response.StatusCode = 400;
                     return;
                 }

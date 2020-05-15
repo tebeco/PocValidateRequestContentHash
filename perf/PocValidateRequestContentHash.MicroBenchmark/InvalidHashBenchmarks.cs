@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenchmarkDotNet;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MyWebApi.ContentHashValidation;
 
@@ -21,7 +22,7 @@ namespace PocValidateRequestContentHash.MicroBenchmark
         public void GlobalSetup()
         {
             var next = new RequestDelegate(_ => Task.CompletedTask);
-            _middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
+            _middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()), NullLogger<ContentHashValidationMiddleware>.Instance);
 
             var bodyBuffer = Encoding.UTF8.GetBytes(new string('-', RequestBodyByteSize));
             var hashHeader = new string('0', 64);
