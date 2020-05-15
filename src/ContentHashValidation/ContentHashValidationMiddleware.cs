@@ -51,9 +51,20 @@ namespace MyWebApi.ContentHashValidation
                 var validationResult = ContentHashValidationResult.Failure;
                 var requestHashBuffer = ArrayPool<byte>.Shared.Rent(_hashAlgorithm.HashSize / 8);
 
-                if (readResult.Buffer.IsSingleSegment
-                            ? GetRequestHash(readResult.Buffer.FirstSpan, requestHashBuffer, out var _)
-                            : GetRequestHash(readResult.Buffer.ToArray(), requestHashBuffer, out var _))
+                bool gotHash;
+                if (!readResult.Buffer.IsSingleSegment)
+                {
+                    var requestBuffer = ArrayPool<byte>.Shared.Rent((int)readResult.Buffer.Length);
+                    readResult.Buffer.CopyTo(requestBuffer);
+                    gotHash = TryGetRequestHash(requestBuffer, requestHashBuffer, out _);
+                    ArrayPool<byte>.Shared.Return(requestBuffer);
+                }
+                else
+                {
+                    gotHash = TryGetRequestHash(readResult.Buffer.FirstSpan, requestHashBuffer, out _);
+                }
+
+                if (gotHash)
                 {
                     validationResult = CompareHash(expectedHash, requestHashBuffer)
                         ? ContentHashValidationResult.Success
@@ -82,7 +93,7 @@ namespace MyWebApi.ContentHashValidation
             return true;
         }
 
-        private bool GetRequestHash(ReadOnlySpan<byte> requestBuffer, byte[] requestHashBuffer, out int hashSize) =>
+        private bool TryGetRequestHash(ReadOnlySpan<byte> requestBuffer, byte[] requestHashBuffer, out int hashSize) =>
             _hashAlgorithm.TryComputeHash(requestBuffer, requestHashBuffer, out hashSize);
     }
 }

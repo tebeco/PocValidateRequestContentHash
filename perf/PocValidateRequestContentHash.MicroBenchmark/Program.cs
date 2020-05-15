@@ -7,8 +7,8 @@ namespace PocValidateRequestContentHash.MicroBenchmark
         public static void Main()
         {
             _ = BenchmarkRunner.Run<ValidDataBenchmarks>();
-            _ = BenchmarkRunner.Run<InvalidHashBenchmarks>();
             _ = BenchmarkRunner.Run<InvalidHeaderBenchmarks>();
+            _ = BenchmarkRunner.Run<InvalidHashBenchmarks>();
             
         }
     }
