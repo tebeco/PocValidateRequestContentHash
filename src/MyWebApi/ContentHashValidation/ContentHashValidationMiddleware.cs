@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Globalization;
 using System.IO.Pipelines;
 using System.Security.Cryptography;
 using System.Text;
@@ -56,19 +57,13 @@ namespace MyWebApi.ContentHashValidation
 
         private ContentHashValidationResult CompareHash(string expectedHash, byte[] hashedContent)
         {
-            var expectedHashBytes = ArrayPool<byte>.Shared.Rent(expectedHash.Length / 2);
-            var validationResult = ContentHashValidationResult.Success;
-            for (int i = 0; i < expectedHash.Length / 2; i++)
+            var expected = expectedHash.AsSpan();
+            for (int i = 0; i < hashedContent.Length; i++)
             {
-                if (hashedContent[i] != Convert.ToByte(new string(expectedHash.AsSpan().Slice(i * 2, 2)), 16))
-                {
-                    validationResult = ContentHashValidationResult.Failure;
-                    break;
-                }
+                if (!int.TryParse(expected.Slice(i * 2, 2), NumberStyles.AllowHexSpecifier, null, out var num) || num != hashedContent[i])
+                    return ContentHashValidationResult.Failure;
             }
-
-            ArrayPool<byte>.Shared.Return(expectedHashBytes);
-            return validationResult;
+            return ContentHashValidationResult.Success;
         }
 
         private byte[] GetRequestHash(ReadOnlySpan<byte> requestBuffer, out int hashSize)
