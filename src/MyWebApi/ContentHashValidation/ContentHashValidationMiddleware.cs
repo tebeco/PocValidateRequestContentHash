@@ -40,6 +40,11 @@ namespace MyWebApi.ContentHashValidation
                 {
                     readResult = await context.Request.BodyReader.ReadAsync(context.RequestAborted);
                 }
+                
+                if (context.RequestAborted.IsCancellationRequested)
+                {
+                    return;
+                }
 
                 var validationResult = ContentHashValidationResult.Failure;
 
