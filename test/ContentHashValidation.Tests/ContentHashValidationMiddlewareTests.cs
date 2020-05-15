@@ -24,7 +24,7 @@ namespace ContentHashValidation.Tests
             var hashStringified = BitConverter.ToString(hash).Replace("-", "");
 
             var httpContext = new DefaultHttpContext();
-            httpContext.Request.Body = new MemoryStream(buffer); //16Ko
+            httpContext.Request.Body = new MemoryStream(buffer);
             httpContext.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashStringified;
             httpContext.Request.Method = "POST";
 
@@ -57,10 +57,10 @@ namespace ContentHashValidation.Tests
             var hashStringified = BitConverter.ToString(hash).Replace("-", "");
 
             var httpContext = new DefaultHttpContext();
-            httpContext.Request.Body = new MemoryStream(buffer); //16Ko
+            httpContext.Request.Body = new MemoryStream(buffer);
             httpContext.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashStringified;
             httpContext.Request.Method = "POST";
-            httpContext.SetEndpoint(new Endpoint(c => Task.CompletedTask,
+            httpContext.SetEndpoint(new Endpoint(c => { c.Response.StatusCode = statusCode; return Task.CompletedTask; },
                                                  new EndpointMetadataCollection(new ValidateContentHashAttribute()),
                                                  "someRoute"));
 
