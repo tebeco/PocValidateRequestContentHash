@@ -66,16 +66,30 @@ Intel Core i9-9980HK CPU 2.40GHz, 1 CPU, 16 logical and 8 physical cores
 | Validate |                4096 | 16,039.0 ns | 319.21 ns | 524.47 ns |     - |     - |     - |         - |
 | Validate |               16384 | 60,341.5 ns | 535.02 ns | 500.46 ns |     - |     - |     - |         - |
 
-```
-// * Warnings *
-MultimodalDistribution
-  InvalidHashBenchmarks.Validate: Default -> It seems that the distribution can have several modes (mValue = 2.87)
-
-// * Hints *
-Outliers
-  InvalidHashBenchmarks.Validate: Default -> 1 outlier  was  removed (9.72 us)
-  InvalidHashBenchmarks.Validate: Default -> 1 outlier  was  removed (12.25 us)
-  InvalidHashBenchmarks.Validate: Default -> 5 outliers were removed (18.89 us..19.89 us)
-  InvalidHashBenchmarks.Validate: Default -> 3 outliers were removed (17.65 us..18.37 us)
-  InvalidHashBenchmarks.Validate: Default -> 1 outlier  was  removed (76.10 us)
-```
+## PoolBenchmarks
+| Method | RequestBodyByteSize |             PoolKind |      Mean |     Error |    StdDev |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------- |-------------------- |--------------------- |----------:|----------:|----------:|-------:|------:|------:|----------:|
+|    Run |                   8 |      SharedArrayPool |  1.097 us | 0.0212 us | 0.0297 us |      - |     - |     - |         - |
+|    Run |                   8 |            ArrayPool |  1.076 us | 0.0126 us | 0.0112 us |      - |     - |     - |         - |
+|    Run |                   8 |  FixedLengthLockFree |  1.040 us | 0.0132 us | 0.0117 us | 0.0038 |     - |     - |      32 B |
+|    Run |                   8 |  FixedLengthWithLock |  1.242 us | 0.0244 us | 0.0440 us |      - |     - |     - |         - |
+|    Run |                   8 | PreAl(...)kFree [31] |  1.080 us | 0.0210 us | 0.0225 us | 0.0038 |     - |     - |      32 B |
+|    Run |                   8 | PreAl(...)hLock [31] |  1.234 us | 0.0244 us | 0.0240 us |      - |     - |     - |         - |
+|    Run |                2048 |      SharedArrayPool |  8.868 us | 0.1756 us | 0.1803 us |      - |     - |     - |         - |
+|    Run |                2048 |            ArrayPool |  8.738 us | 0.1213 us | 0.1075 us |      - |     - |     - |         - |
+|    Run |                2048 |  FixedLengthLockFree |  8.780 us | 0.1244 us | 0.1164 us |      - |     - |     - |      32 B |
+|    Run |                2048 |  FixedLengthWithLock |  8.945 us | 0.0736 us | 0.0688 us |      - |     - |     - |         - |
+|    Run |                2048 | PreAl(...)kFree [31] |  8.823 us | 0.0687 us | 0.0609 us |      - |     - |     - |      32 B |
+|    Run |                2048 | PreAl(...)hLock [31] |  8.904 us | 0.1298 us | 0.1151 us |      - |     - |     - |         - |
+|    Run |                4096 |      SharedArrayPool | 16.666 us | 0.3239 us | 0.3601 us |      - |     - |     - |         - |
+|    Run |                4096 |            ArrayPool | 17.010 us | 0.3292 us | 0.3659 us |      - |     - |     - |         - |
+|    Run |                4096 |  FixedLengthLockFree | 16.504 us | 0.1427 us | 0.1265 us |      - |     - |     - |      32 B |
+|    Run |                4096 |  FixedLengthWithLock | 16.867 us | 0.3321 us | 0.5362 us |      - |     - |     - |         - |
+|    Run |                4096 | PreAl(...)kFree [31] | 16.604 us | 0.3294 us | 0.3921 us |      - |     - |     - |      32 B |
+|    Run |                4096 | PreAl(...)hLock [31] | 16.490 us | 0.1513 us | 0.1341 us |      - |     - |     - |         - |
+|    Run |               16384 |      SharedArrayPool | 61.939 us | 1.0304 us | 0.8604 us |      - |     - |     - |         - |
+|    Run |               16384 |            ArrayPool | 64.042 us | 1.2377 us | 1.5653 us |      - |     - |     - |         - |
+|    Run |               16384 |  FixedLengthLockFree | 62.484 us | 1.2229 us | 1.6325 us |      - |     - |     - |      32 B |
+|    Run |               16384 |  FixedLengthWithLock | 62.682 us | 1.0509 us | 0.9316 us |      - |     - |     - |         - |
+|    Run |               16384 | PreAl(...)kFree [31] | 61.910 us | 0.6302 us | 0.5895 us |      - |     - |     - |      32 B |
+|    Run |               16384 | PreAl(...)hLock [31] | 62.116 us | 0.4770 us | 0.4229 us |      - |     - |     - |         - |

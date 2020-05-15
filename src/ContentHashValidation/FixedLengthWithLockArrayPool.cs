@@ -12,15 +12,17 @@ namespace MyWebApi.ContentHashValidation
         private SpinLock _lock = new SpinLock();
         private readonly int _size;
 
-        public FixedLengthWithLockArrayPool(int size)
+        public FixedLengthWithLockArrayPool(int size, int preAllocatedBuffer = 0)
         {
-            if (size < 0)
-            {
-                //ThrowHelper.ThrowArgumentOutOfRangeException(nameof(size), size);
-            }
+            Debug.Assert(size > 0);
+            Debug.Assert(preAllocatedBuffer >= 0);
 
             _size = size;
 
+            for (int i = 0; i < preAllocatedBuffer; i++)
+            {
+                _arrays.Push(new T[_size]);
+            }
         }
 
         private bool Enter()

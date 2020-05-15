@@ -5,6 +5,8 @@
         SharedArrayPool,
         ArrayPool,
         FixedLengthLockFree,
-        FixedLengthWithLock
+        FixedLengthWithLock,
+        PreAllocatedFixedLengthLockFree,
+        PreAllocatedFixedLengthWithLock
     }
 }

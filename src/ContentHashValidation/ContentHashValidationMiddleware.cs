@@ -25,8 +25,10 @@ namespace MyWebApi.ContentHashValidation
             {
                 PoolKind.SharedArrayPool => ArrayPool<byte>.Shared,
                 PoolKind.ArrayPool => ArrayPool<byte>.Create(_hashAlgorithm.HashSize / 8, 512),
-                PoolKind.FixedLengthLockFree => new FixedLengthLockFreeArrayPool<byte>(512),
-                PoolKind.FixedLengthWithLock => new FixedLengthWithLockArrayPool<byte>(512),
+                PoolKind.FixedLengthLockFree => new FixedLengthLockFreeArrayPool<byte>(_hashAlgorithm.HashSize / 8),
+                PoolKind.FixedLengthWithLock => new FixedLengthWithLockArrayPool<byte>(_hashAlgorithm.HashSize / 8),
+                PoolKind.PreAllocatedFixedLengthLockFree => new FixedLengthLockFreeArrayPool<byte>(_hashAlgorithm.HashSize / 8, 512),
+                PoolKind.PreAllocatedFixedLengthWithLock => new FixedLengthWithLockArrayPool<byte>(_hashAlgorithm.HashSize / 8, 512),
                 _ => throw new NotImplementedException(),
             };
         }

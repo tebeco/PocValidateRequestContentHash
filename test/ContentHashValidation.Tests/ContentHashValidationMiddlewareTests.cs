@@ -127,5 +127,42 @@ namespace ContentHashValidation.Tests
 
             Assert.Equal(400, httpContext.Response.StatusCode);
         }
+
+        [Theory]
+        [InlineData(10, PoolKind.SharedArrayPool)]
+        [InlineData(10, PoolKind.ArrayPool)]
+        [InlineData(10, PoolKind.FixedLengthLockFree)]
+        [InlineData(10, PoolKind.FixedLengthWithLock)]
+        [InlineData(10, PoolKind.PreAllocatedFixedLengthLockFree)]
+        [InlineData(10, PoolKind.PreAllocatedFixedLengthWithLock)]
+        [InlineData(16384, PoolKind.SharedArrayPool)]
+        [InlineData(16384, PoolKind.ArrayPool)]
+        [InlineData(16384, PoolKind.FixedLengthLockFree)]
+        [InlineData(16384, PoolKind.FixedLengthWithLock)]
+        [InlineData(16384, PoolKind.PreAllocatedFixedLengthLockFree)]
+        [InlineData(16384, PoolKind.PreAllocatedFixedLengthWithLock)]
+
+        public async Task Should_return_200_request_When_hash_match_with_specific_pool(int payloadSize, PoolKind poolKind)
+        {
+            var buffer = Encoding.UTF8.GetBytes(new string('-', payloadSize));
+            var hash = SHA256.Create().ComputeHash(buffer);
+            var hashStringified = BitConverter.ToString(hash).Replace("-", "");
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Body = new MemoryStream(buffer);
+            httpContext.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashStringified;
+            httpContext.Request.Method = "POST";
+
+            httpContext.SetEndpoint(new Endpoint(c => Task.CompletedTask,
+                                                 new EndpointMetadataCollection(new ValidateContentHashAttribute()),
+                                                 "someRoute"));
+
+            var next = new RequestDelegate(context => { context.Response.StatusCode = 200; return Task.CompletedTask; });
+            var middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions() { PoolKind = poolKind }));
+
+            await middleware.InvokeAsync(httpContext);
+
+            Assert.Equal(200, httpContext.Response.StatusCode);
+        }
     }
 }
