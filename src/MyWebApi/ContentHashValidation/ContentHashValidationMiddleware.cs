@@ -29,25 +29,35 @@ namespace MyWebApi.ContentHashValidation
         {
             if (context.GetEndpoint()?.Metadata?.GetMetadata<IContentHashValidationMetadata>() != null)
             {
+                if (!context.Request.Headers.TryGetValue(_options.HeaderName, out var expectedHash))
+                {
+                    context.Response.StatusCode = 400;
+                    return;
+                }
+
                 var readResult = await context.Request.BodyReader.ReadAsync(context.RequestAborted);
                 while (!readResult.IsCompleted && !readResult.IsCanceled)
                 {
                     readResult = await context.Request.BodyReader.ReadAsync(context.RequestAborted);
                 }
 
-                var hashBytes = readResult.Buffer.IsSingleSegment
-                            ? GetRequestHash(readResult.Buffer.FirstSpan, out var _)
-                            : GetRequestHash(readResult.Buffer.ToArray(), out var _);
+                var validationResult = ContentHashValidationResult.Failure;
 
-                var expectedHash = context.Request.Headers[_options.HeaderName][0]; //can throw
+                var requestHashBuffer = ArrayPool<byte>.Shared.Rent(_hashAlgorithm.HashSize / 8);
 
-                var validationResult = CompareHash(expectedHash, hashBytes);
-                ArrayPool<byte>.Shared.Return(hashBytes);
+                if (readResult.Buffer.IsSingleSegment
+                            ? GetRequestHash(readResult.Buffer.FirstSpan, requestHashBuffer, out var _)
+                            : GetRequestHash(readResult.Buffer.ToArray(), requestHashBuffer, out var _))
+                {
+                    validationResult = CompareHash(expectedHash, requestHashBuffer)
+                        ? ContentHashValidationResult.Success
+                        : ContentHashValidationResult.Failure;
+                }
+                ArrayPool<byte>.Shared.Return(requestHashBuffer);
 
                 if (!validationResult.Succeed)
                 {
                     context.Response.StatusCode = 400;
-                    await context.Response.BodyWriter.CompleteAsync();
                     return;
                 }
             }
@@ -55,24 +65,18 @@ namespace MyWebApi.ContentHashValidation
             await _next.Invoke(context);
         }
 
-        private ContentHashValidationResult CompareHash(string expectedHash, byte[] hashedContent)
+        private bool CompareHash(string expectedHash, byte[] hashedContent)
         {
             var expected = expectedHash.AsSpan();
             for (int i = 0; i < hashedContent.Length; i++)
             {
                 if (!int.TryParse(expected.Slice(i * 2, 2), NumberStyles.AllowHexSpecifier, null, out var num) || num != hashedContent[i])
-                    return ContentHashValidationResult.Failure;
+                    return false;
             }
-            return ContentHashValidationResult.Success;
+            return false;
         }
 
-        private byte[] GetRequestHash(ReadOnlySpan<byte> requestBuffer, out int hashSize)
-        {
-            var requestHashBuffer = ArrayPool<byte>.Shared.Rent(_hashAlgorithm.HashSize / 8);
-
-            _ = _hashAlgorithm.TryComputeHash(requestBuffer, requestHashBuffer, out hashSize);
-
-            return requestHashBuffer;
-        }
+        private bool GetRequestHash(ReadOnlySpan<byte> requestBuffer, byte[] requestHashBuffer, out int hashSize) =>
+            _hashAlgorithm.TryComputeHash(requestBuffer, requestHashBuffer, out hashSize);
     }
 }
