@@ -72,17 +72,11 @@ namespace ContentHashValidation.Tests
             Assert.Equal(200, httpContext.Response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(10)]
-        [InlineData(16384)]
-        public async Task Should_return_400_request_When_hash_match(int payloadSize)
+        [Fact]
+        public async Task Should_return_400_request_When_hash_match()
         {
-            var buffer = Encoding.UTF8.GetBytes(new string('-', payloadSize));
-            var hash = SHA256.Create().ComputeHash(buffer);
-            var hashStringified = BitConverter.ToString(hash).Replace("-", "");
-
             var httpContext = new DefaultHttpContext();
-            httpContext.Request.Body = new MemoryStream(buffer); //16Ko
+            httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("payload"));
             httpContext.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = new string('0', 64);
             httpContext.Request.Method = "POST";
             httpContext.SetEndpoint(new Endpoint(c => Task.CompletedTask,
