@@ -79,7 +79,7 @@ namespace MyWebApi.ContentHashValidation
                 if (!int.TryParse(expected.Slice(i * 2, 2), NumberStyles.AllowHexSpecifier, null, out var num) || num != hashedContent[i])
                     return false;
             }
-            return false;
+            return true;
         }
 
         private bool GetRequestHash(ReadOnlySpan<byte> requestBuffer, byte[] requestHashBuffer, out int hashSize) =>
