@@ -46,7 +46,7 @@ namespace PocValidateRequestContentHash.MicroBenchmark
         public bool RequireContentValidation;
 
         [Benchmark]
-        public async Task Not_Validated_Small_Payload()
+        public async Task Run_ContentHashValidationMiddleware()
         {
             await _middleware.InvokeAsync(_httpContext);
         }
