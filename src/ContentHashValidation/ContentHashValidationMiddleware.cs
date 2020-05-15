@@ -47,7 +47,6 @@ namespace MyWebApi.ContentHashValidation
                     return;
                 }
 
-
                 var validationResult = ContentHashValidationResult.Failure;
                 var requestHashBuffer = ArrayPool<byte>.Shared.Rent(_hashAlgorithm.HashSize / 8);
 
