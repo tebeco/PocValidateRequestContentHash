@@ -14,10 +14,7 @@ namespace PocValidateRequestContentHash.MicroBenchmark
     [MemoryDiagnoser]
     public class Benchmarks
     {
-        private DefaultHttpContext _smallHttpContextNotValidated;
-        private DefaultHttpContext _bigHttpContextNotValidated;
-        private DefaultHttpContext _smallHttpContextValidated;
-        private DefaultHttpContext _bigHttpContextValidated;
+        private DefaultHttpContext _httpContext;
         private ContentHashValidationMiddleware _middleware;
 
         [GlobalSetup]
@@ -26,55 +23,32 @@ namespace PocValidateRequestContentHash.MicroBenchmark
             var next = new RequestDelegate(_ => Task.CompletedTask);
             _middleware = new ContentHashValidationMiddleware(next, Options.Create(new ContentHashValidationOptions()));
 
-            _smallHttpContextNotValidated = new DefaultHttpContext();
-            _smallHttpContextNotValidated.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("payload"));
-            _smallHttpContextNotValidated.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = "239f59ed55e737c77147cf55ad0c1b030b6d7ee748a7426952f9b852d5a935e5";
-            _smallHttpContextNotValidated.Request.Method = "POST";
-
-            _smallHttpContextValidated = new DefaultHttpContext();
-            _smallHttpContextValidated.Request.Path = "/validationcontent/validated";
-            _smallHttpContextValidated.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes("payload"));
-            _smallHttpContextValidated.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = "239f59ed55e737c77147cf55ad0c1b030b6d7ee748a7426952f9b852d5a935e5";
-            _smallHttpContextValidated.Request.Method = "POST";
-
-            var buffer = Encoding.UTF8.GetBytes(new string('-', 16384));
-            var hash = SHA256.Create().ComputeHash(buffer);
+            var bodyBuffer = Encoding.UTF8.GetBytes(new string('-', RequestBodyByteSize));
+            var hash = SHA256.Create().ComputeHash(bodyBuffer);
             var hashStringified = BitConverter.ToString(hash).Replace("-", "");
 
-            _bigHttpContextNotValidated = new DefaultHttpContext();
-            _bigHttpContextNotValidated.Request.Body = new MemoryStream(buffer); //16Ko
-            _bigHttpContextNotValidated.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashStringified;
-            _bigHttpContextNotValidated.Request.Method = "POST";
-
-            _bigHttpContextValidated = new DefaultHttpContext();
-            _smallHttpContextValidated.Request.Path = "/validationcontent/validated";
-            _bigHttpContextValidated.Request.Body = new MemoryStream(buffer); //16Ko
-            _bigHttpContextValidated.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashStringified;
-            _bigHttpContextValidated.Request.Method = "POST";
+            _httpContext = new DefaultHttpContext();
+            _httpContext.Request.Body = new MemoryStream(bodyBuffer);
+            _httpContext.Request.Headers[ContentHashValidationOptions.DefaultHeaderName] = hashStringified;
+            _httpContext.Request.Method = "POST";
+            if (RequireContentValidation)
+            {
+                _httpContext.SetEndpoint(new Endpoint(_ => Task.CompletedTask,
+                                                         new EndpointMetadataCollection(new ValidateContentHashAttribute()),
+                                                         "someRoute"));
+            }
         }
+
+        [Params(8, 2048, 4096, 16384)]
+        public int RequestBodyByteSize;
+
+        [Params(true, false)]
+        public bool RequireContentValidation;
 
         [Benchmark]
         public async Task Not_Validated_Small_Payload()
         {
-            await _middleware.InvokeAsync(_smallHttpContextNotValidated);
-        }
-
-        [Benchmark]
-        public async Task Not_Validated_16KB_Payload()
-        {
-            await _middleware.InvokeAsync(_smallHttpContextNotValidated);
-        }
-
-        [Benchmark]
-        public async Task Validated_Small_Payload()
-        {
-            await _middleware.InvokeAsync(_smallHttpContextNotValidated);
-        }
-
-        [Benchmark]
-        public async Task Validated_16KB_Payload()
-        {
-            await _middleware.InvokeAsync(_smallHttpContextNotValidated);
+            await _middleware.InvokeAsync(_httpContext);
         }
     }
 }
