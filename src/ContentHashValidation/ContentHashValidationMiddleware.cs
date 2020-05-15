@@ -29,7 +29,8 @@ namespace MyWebApi.ContentHashValidation
         {
             if (context.GetEndpoint()?.Metadata?.GetMetadata<IContentHashValidationMetadata>() != null)
             {
-                if (!context.Request.Headers.TryGetValue(_options.HeaderName, out var expectedHash))
+                if (!context.Request.Headers.TryGetValue(_options.HeaderName, out var expectedHash)
+                    || expectedHash[0].Length << 2 != _hashAlgorithm.HashSize)
                 {
                     context.Response.StatusCode = 400;
                     return;
