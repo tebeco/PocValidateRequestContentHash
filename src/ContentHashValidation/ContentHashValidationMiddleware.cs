@@ -89,7 +89,10 @@ namespace MyWebApi.ContentHashValidation
 
                 if (!validationResult.Succeed)
                 {
+#if !BOMBARDIER_BUILD
+// This seems to generate a TONS of missmatch while using bombardier, not sure why yet
                     _logger.LogWarning("Hash missmatch, expected: {expected}", expectedHash);
+#endif
 
                     context.Response.StatusCode = 400;
                     return;
