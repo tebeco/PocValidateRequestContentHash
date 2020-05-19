@@ -31,6 +31,7 @@ namespace MyWebApi
             }
 
             app.UseRouting();
+            app.UseInOutLogging();
 
             app.UseAuthorization();
 
