@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ContentHashValidation\ContentHashValidation.csproj" />
+    <ProjectReference Include="..\..\src\InOutLogging\InOutLogging.csproj" />
   </ItemGroup>
 
 
