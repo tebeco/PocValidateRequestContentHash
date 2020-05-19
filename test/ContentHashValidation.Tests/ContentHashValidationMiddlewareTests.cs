@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using MyWebApi.ContentHashValidation;
+using ContentHashValidation;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -142,7 +142,6 @@ namespace ContentHashValidation.Tests
         [InlineData(16384, PoolKind.FixedLengthWithLock)]
         [InlineData(16384, PoolKind.PreAllocatedFixedLengthLockFree)]
         [InlineData(16384, PoolKind.PreAllocatedFixedLengthWithLock)]
-
         public async Task Should_return_200_request_When_hash_match_with_specific_pool(int payloadSize, PoolKind poolKind)
         {
             var buffer = Encoding.UTF8.GetBytes(new string('-', payloadSize));

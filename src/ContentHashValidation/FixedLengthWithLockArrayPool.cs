@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-namespace MyWebApi.ContentHashValidation
+namespace ContentHashValidation
 {
     public sealed class FixedLengthWithLockArrayPool<T> : ArrayPool<T>
     {

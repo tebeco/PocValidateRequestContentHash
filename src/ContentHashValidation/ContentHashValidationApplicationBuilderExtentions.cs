@@ -1,4 +1,4 @@
-﻿using MyWebApi.ContentHashValidation;
+﻿using ContentHashValidation;
 
 namespace Microsoft.AspNetCore.Builder
 {

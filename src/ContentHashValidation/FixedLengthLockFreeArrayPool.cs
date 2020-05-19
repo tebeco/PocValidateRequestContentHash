@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
-namespace MyWebApi.ContentHashValidation
+namespace ContentHashValidation
 {
     public sealed class FixedLengthLockFreeArrayPool<T> : ArrayPool<T>
     {

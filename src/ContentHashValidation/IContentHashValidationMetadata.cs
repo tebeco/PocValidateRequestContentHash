@@ -1,4 +1,4 @@
-﻿namespace MyWebApi.ContentHashValidation
+﻿namespace ContentHashValidation
 {
     public interface IContentHashValidationMetadata { }
 }

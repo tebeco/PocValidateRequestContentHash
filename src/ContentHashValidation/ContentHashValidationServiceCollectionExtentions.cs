@@ -1,5 +1,5 @@
 ﻿using System;
-using MyWebApi.ContentHashValidation;
+using ContentHashValidation;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

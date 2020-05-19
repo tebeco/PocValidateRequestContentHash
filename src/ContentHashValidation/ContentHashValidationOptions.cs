@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-
-namespace MyWebApi.ContentHashValidation
+﻿namespace ContentHashValidation
 {
     public class ContentHashValidationOptions
     {

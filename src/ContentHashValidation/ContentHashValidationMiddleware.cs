@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace MyWebApi.ContentHashValidation
+namespace ContentHashValidation
 {
     public class ContentHashValidationMiddleware
     {
