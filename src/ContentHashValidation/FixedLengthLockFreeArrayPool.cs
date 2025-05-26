@@ -5,6 +5,7 @@ using System.Diagnostics;
 namespace ContentHashValidation
 {
     public sealed class FixedLengthLockFreeArrayPool<T> : ArrayPool<T>
+        where T: notnull
     {
         private readonly ConcurrentStack<T[]> _arrays = new ConcurrentStack<T[]>();
         private readonly int _size;
@@ -24,7 +25,7 @@ namespace ContentHashValidation
 
         public override T[] Rent(int minimumLength)
         {
-            if (_arrays.TryPop(out T[] value))
+            if (_arrays.TryPop(out var value))
             {
                 return value;
             }
