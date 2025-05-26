@@ -1,24 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<RootNamespace>Olympe.Hermes.Api.Tests</RootNamespace>
+		<OutputType>Exe</OutputType>
+		<!--
+		  To enable the Microsoft Testing Platform 'dotnet test' experience, add property:
+			<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
 
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+		  To enable the Microsoft Testing Platform native command line experience, add property:
+			<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
-    <PackageReference Include="coverlet.collector" Version="1.2.0" />
-  </ItemGroup>
+		  For more information on Microsoft Testing Platform support in xUnit.net, please visit:
+			https://xunit.net/docs/getting-started/v3/microsoft-testing-platform
+		-->
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\ContentHashValidation\ContentHashValidation.csproj" />
-  </ItemGroup>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
+		<PackageReference Include="xunit.v3" Version="2.*" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.*">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\ContentHashValidation\ContentHashValidation.csproj" />
+	</ItemGroup>
 
 </Project>

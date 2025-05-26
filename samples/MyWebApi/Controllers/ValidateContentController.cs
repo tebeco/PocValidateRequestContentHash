@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ContentHashValidation;
-using InOutLogging;
 
 namespace MyWebApi.Controllers
 {
@@ -16,7 +15,6 @@ namespace MyWebApi.Controllers
 
         [HttpPost("only-hash")]
         [ValidateContentHash]
-        [NoContentInOutLogging]
         public ActionResult Only_Hash()
         {
             return Ok();
@@ -24,7 +22,6 @@ namespace MyWebApi.Controllers
 
         [HttpPost("hash-no-content")]
         [ValidateContentHash]
-        [NoContentInOutLogging]
         public ActionResult Hash_Without_Content_InOnLogging()
         {
             return Ok();

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30105.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{63AE0367-7957-45B4-836F-A29BD41EC4D6}"
 EndProject
@@ -19,7 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{2A0B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyWebApi", "samples\MyWebApi\MyWebApi.csproj", "{E917409A-6FB2-450D-ABEF-735091171308}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InOutLogging", "src\InOutLogging\InOutLogging.csproj", "{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,18 +78,6 @@ Global
 		{E917409A-6FB2-450D-ABEF-735091171308}.Release|x64.Build.0 = Release|Any CPU
 		{E917409A-6FB2-450D-ABEF-735091171308}.Release|x86.ActiveCfg = Release|Any CPU
 		{E917409A-6FB2-450D-ABEF-735091171308}.Release|x86.Build.0 = Release|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Debug|x64.Build.0 = Debug|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Debug|x86.Build.0 = Debug|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Release|x64.ActiveCfg = Release|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Release|x64.Build.0 = Release|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Release|x86.ActiveCfg = Release|Any CPU
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,7 +87,6 @@ Global
 		{573E2916-E130-4867-9992-19C95C3F2C7E} = {63AE0367-7957-45B4-836F-A29BD41EC4D6}
 		{5B648140-ED3E-4AC7-AB57-5CE968A4F290} = {C32067D9-1396-4F5E-88F5-3B1DBF723F7E}
 		{E917409A-6FB2-450D-ABEF-735091171308} = {2A0B88E5-C485-4B65-A58A-79D8ACBE334C}
-		{C93BDDBC-030D-42A4-8EC2-E1935DB682F2} = {63AE0367-7957-45B4-836F-A29BD41EC4D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DFD16F06-D94D-4869-9749-6060CF5F84A3}
