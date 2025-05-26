@@ -1,5 +1,4 @@
-﻿using System;
-using ContentHashValidation;
+﻿using ContentHashValidation;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
