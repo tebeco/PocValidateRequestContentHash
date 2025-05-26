@@ -38,10 +38,24 @@ namespace ContentHashValidation
         {
             if (context.GetEndpoint()?.Metadata?.GetMetadata<IContentHashValidationMetadata>() != null)
             {
-                if (!context.Request.Headers.TryGetValue(_options.HeaderName, out var expectedHash)
-                    || expectedHash[0].Length << 2 != _hashAlgorithm.HashSize)
+                if (!context.Request.Headers.TryGetValue(_options.HeaderName, out var headerHashValue))
                 {
-                    _logger.LogWarning("Correputed header: {header}", expectedHash);
+                    _logger.LogWarning("Missing header {HeaderName}", _options.HeaderName);
+                    context.Response.StatusCode = 400;
+                    return;
+                }
+
+                if (headerHashValue.Count != 1)
+                {
+                    _logger.LogWarning("Corruputed header: {HeaderName} should only have a single value. Current value: {HeaderValue}", _options.HeaderName, headerHashValue.ToString());
+                    context.Response.StatusCode = 400;
+                    return;
+                }
+
+                var requestHeaderHash = headerHashValue.ToString();
+                if (requestHeaderHash.Length << 2 != _hashAlgorithm.HashSize)
+                {
+                    _logger.LogWarning("Corruputed header: {HeaderName} with value {HeaderValue}", _options.HeaderName, requestHeaderHash);
                     context.Response.StatusCode = 400;
                     return;
                 }
@@ -79,7 +93,7 @@ namespace ContentHashValidation
 
                 if (gotHash)
                 {
-                    validationResult = CompareHash(expectedHash, requestHashBuffer)
+                    validationResult = CompareHash(requestHeaderHash, requestHashBuffer)
                         ? ContentHashValidationResult.Success
                         : ContentHashValidationResult.Failure;
                 }
@@ -89,7 +103,7 @@ namespace ContentHashValidation
                 {
 #if !BOMBARDIER_BUILD
 // This seems to generate a TONS of missmatch while using bombardier, not sure why yet
-                    _logger.LogWarning("Hash missmatch, expected: {expected}", expectedHash);
+                    _logger.LogWarning("Hash missmatch, expected: {expected}", requestHeaderHash);
 #endif
 
                     context.Response.StatusCode = 400;
