@@ -3,20 +3,21 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using BenchmarkDotNet;
 using BenchmarkDotNet.Attributes;
+using ContentHashValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using MyWebApi.ContentHashValidation;
 
 namespace PocValidateRequestContentHash.MicroBenchmark
 {
     [MemoryDiagnoser]
     public class ValidDataBenchmarks
     {
+#nullable disable
         private DefaultHttpContext _httpContext;
         private ContentHashValidationMiddleware _middleware;
+#nullable enable
 
         [GlobalSetup]
         public void GlobalSetup()
