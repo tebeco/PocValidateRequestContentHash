@@ -20,7 +20,7 @@ namespace ContentHashValidation
             _next = next;
             _logger = logger;
             _options = options.Value;
-            _hashAlgorithm = HashAlgorithm.Create(_options.HashName);
+            _hashAlgorithm  = (HashAlgorithm)CryptoConfig.CreateFromName(_options.HashName)!;
 
             _hashArrayPool = _options.PoolKind switch
             {
@@ -114,7 +114,7 @@ namespace ContentHashValidation
             await _next.Invoke(context);
         }
 
-        private bool CompareHash(string expectedHash, byte[] hashedContent)
+        private static bool CompareHash(string expectedHash, byte[] hashedContent)
         {
             var expected = expectedHash.AsSpan();
             for (int i = 0; i < hashedContent.Length; i++)

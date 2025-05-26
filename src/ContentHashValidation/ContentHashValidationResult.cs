@@ -2,8 +2,8 @@
 {
     public struct ContentHashValidationResult
     {
-        public static ContentHashValidationResult Success = new ContentHashValidationResult(true);
-        public static ContentHashValidationResult Failure = new ContentHashValidationResult(false);
+        public static readonly ContentHashValidationResult Success = new ContentHashValidationResult(true);
+        public static readonly ContentHashValidationResult Failure = new ContentHashValidationResult(false);
 
         public ContentHashValidationResult(bool succeed) : this()
         {

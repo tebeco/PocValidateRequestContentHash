@@ -16,7 +16,7 @@ namespace ContentHashValidation.Tests
         public async Task Should_return_200_request_When_hash_match(bool isValidatedRoute, int payloadSize)
         {
             var buffer = Encoding.UTF8.GetBytes(new string('-', payloadSize));
-            var hash = SHA256.Create().ComputeHash(buffer);
+            var hash = SHA256.HashData(buffer);
             var hashStringified = BitConverter.ToString(hash).Replace("-", "");
 
             var httpContext = new DefaultHttpContext();
@@ -49,7 +49,7 @@ namespace ContentHashValidation.Tests
         public async Task Should_not_change_existing_StatusCode_When_hash_match(int statusCode, int payloadSize)
         {
             var buffer = Encoding.UTF8.GetBytes(new string('-', payloadSize));
-            var hash = SHA256.Create().ComputeHash(buffer);
+            var hash = SHA256.HashData(buffer);
             var hashStringified = BitConverter.ToString(hash).Replace("-", "");
 
             var httpContext = new DefaultHttpContext();
